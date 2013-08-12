@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Add new Client</title>
+    </h:head>
+    <h:body>
+        <f:view>
+            <h:form>
+                <p:panel id="panel" header="Add new client">  
+                    <p:fieldset legend="Personal information">
+                        <p:messages id="messages" />  
+                        <h:panelGrid columns="2">  
+                            <h:outputLabel for="firstName" value="First name:" />  
+                            <p:inputText id="firstName" value="#{clientBean.client.firstName}" required="true"/>
+
+                            <p:outputLabel for="lastName" value="Last name:" />
+                            <p:inputText id="lastName" value="#{clientBean.client.lastName}" required="true" />  
+
+                            <p:outputLabel for="title" value="Title:" />
+                            <h:selectOneMenu id="title" value="#{clientBean.client.title}">
+                                <f:selectItems value="#{clientTitleBean.titles}" var="title" itemValue="#{title}" 
+                                               itemLabel="#{title}" noSelectionValue="true"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>  
+                    </p:fieldset>
+
+                    <p:fieldset legend="Address details">
+                        <h:panelGrid columns="2">  
+                            <h:outputLabel for="street" value="Street:" />  
+                            <p:inputText id="street" value="#{clientBean.client.address.street}" required="false"/>
+
+                            <h:outputLabel for="postal-code" value="Postal code:" />  
+                            <p:inputText id="postal-code" value="#{clientBean.client.address.postalCode}" required="false"/>
+
+                            <h:outputLabel for="city" value="City:" />  
+                            <p:inputText id="city" value="#{clientBean.client.address.city}" required="false"/>
+                        </h:panelGrid>
+                    </p:fieldset>
+                </p:panel>  
+                <p:commandButton value="submit" action="#{clientBean.storeClient()}" update="panel"/>  
+            </h:form>
+        </f:view>
+    </h:body>
+</html>
+
