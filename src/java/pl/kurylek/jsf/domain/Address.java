@@ -1,29 +1,41 @@
 package pl.kurylek.jsf.domain;
 
 import java.io.Serializable;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
 @Table(name = Address.TABLE_NAME)
 public class Address implements Serializable {
+
     public static final String TABLE_NAME = "ADDRESS";
     private static final long serialVersionUID = 1L;
     private static final String POSTAL_CODE_REGEXP = "^\\d{2}-\\d{3}$"; // 41-907
+    private static final int CITY_MIN_LENGTH = 2;
     @Id
     @GeneratedValue
     private Long id;
     @NotNull
+    @NotEmpty(message = "Please enter street name")
     private String street;
     @NotNull
-    @Pattern(regexp = POSTAL_CODE_REGEXP, message = "Must be a valid postal code")
+    @Pattern(regexp = POSTAL_CODE_REGEXP, message = "Please enter a valid postal code, i.e. 41-907")
     private String postalCode;
     @NotNull
+    @NotEmpty(message = "Please enter city name")
+    @Length(min = CITY_MIN_LENGTH, message = "Please enter at least " + CITY_MIN_LENGTH + " charaters")
     private String city;
+    @NotNull
+    @ManyToOne(optional = false, cascade = {CascadeType.DETACH, CascadeType.PERSIST})
+    private Country country;
 
     public Long getId() {
         return id;
@@ -55,5 +67,13 @@ public class Address implements Serializable {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public Country getCountry() {
+        return country;
+    }
+
+    public void setCountry(Country country) {
+        this.country = country;
     }
 }

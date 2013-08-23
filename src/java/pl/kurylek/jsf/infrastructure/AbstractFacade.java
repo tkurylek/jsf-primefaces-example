@@ -2,15 +2,20 @@ package pl.kurylek.jsf.infrastructure;
 
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 public abstract class AbstractFacade<T> {
     private Class<T> entityClass;
+    @PersistenceContext(name = "mysql-development")
+    protected EntityManager em;
 
     public AbstractFacade(Class<T> entityClass) {
         this.entityClass = entityClass;
     }
 
-    protected abstract EntityManager getEntityManager();
+    protected EntityManager getEntityManager() {
+        return em;
+    }
 
     public void create(T entity) {
         getEntityManager().persist(entity);

@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
@@ -19,14 +20,19 @@ public class Client implements Serializable {
 
     public static final String TABLE_NAME = "CLIENT";
     private static final long serialVersionUID = 1L;
+    
+    private static final int FIRST_NAME_MIN_LENGTH = 3;
+    private static final int LAST_NAME_MIN_LENGTH = 3;
     @Id
     @GeneratedValue
     private Long id;
     @NotNull
-    @NotEmpty
+    @NotEmpty(message = "Please enter first name")
+    @Length(min = FIRST_NAME_MIN_LENGTH, message = "Please enter at least " + FIRST_NAME_MIN_LENGTH + " charaters")
     private String firstName;
     @NotNull
-    @NotEmpty
+    @NotEmpty(message = "Please enter last name")
+    @Length(min = LAST_NAME_MIN_LENGTH, message = "Please enter at least " + LAST_NAME_MIN_LENGTH + " charaters")
     private String lastName;
     @NotNull
     @OneToOne(fetch = FetchType.LAZY, optional = false, orphanRemoval = true, cascade = {CascadeType.ALL})

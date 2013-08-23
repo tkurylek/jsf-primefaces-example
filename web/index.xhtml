@@ -5,44 +5,80 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui">
     <h:head>
-        <title>Add new Client</title>
+        <title>Clients Management</title>
+        <style>.ui-widget, .ui-widget .ui-widget {font-size: 95%;}</style>
+        <script language="javascript">
+            var idleCurtain = {
+                fadeIn : function() {
+                    $('.ui-dialog').hide()
+                    $('.ui-widget-overlay').hide().fadeIn('slow');
+                }
+            }
+        </script>
     </h:head>
     <h:body>
         <f:view>
-            <h:form>
-                <p:panel id="panel" header="Add new client">  
-                    <p:fieldset legend="Personal information">
-                        <p:messages id="messages" />  
-                        <h:panelGrid columns="2">  
-                            <h:outputLabel for="firstName" value="First name:" />  
-                            <p:inputText id="firstName" value="#{clientBean.client.firstName}" required="true"/>
+            <p:idleMonitor timeout="60000" onidle="idleDialog.show();idleCurtain.fadeIn()" onactive="idleDialog.hide()"/>  
+            <p:dialog resizable="false" widgetVar="idleDialog" modal="true" visible="false" width='0' height="0"/>  
+            <p:layout fullPage="true">
+                <p:layoutUnit header="Add new client" position="east" size="450" resizable="true" collapsible="true">
+                    <h:form>
+                        <p:panel id="panel">  
+                            <p:fieldset legend="Personal information">
+                                <p:messages id="global-errors" globalOnly="true" closable="true" showDetail="true" />
+                                <h:panelGrid columns="3">  
+                                    <p:outputLabel for="title" value="Title:" />
+                                    <h:selectOneMenu id="title" value="#{clientBean.client.title}">
+                                        <f:selectItems value="#{clientTitleBean.titles}" var="title" itemValue="#{title}" 
+                                                       itemLabel="#{title}" noSelectionValue="true" />
+                                    </h:selectOneMenu>
+                                    <p:message for="title" />
 
-                            <p:outputLabel for="lastName" value="Last name:" />
-                            <p:inputText id="lastName" value="#{clientBean.client.lastName}" required="true" />  
+                                    <h:outputLabel for="firstName" value="First name:" />  
+                                    <p:inputText id="firstName" value="#{clientBean.client.firstName}" />
+                                    <p:message for="firstName" />
 
-                            <p:outputLabel for="title" value="Title:" />
-                            <h:selectOneMenu id="title" value="#{clientBean.client.title}">
-                                <f:selectItems value="#{clientTitleBean.titles}" var="title" itemValue="#{title}" 
-                                               itemLabel="#{title}" noSelectionValue="true"/>
-                            </h:selectOneMenu>
-                        </h:panelGrid>  
-                    </p:fieldset>
+                                    <p:outputLabel for="lastName" value="Last name:" />
+                                    <p:inputText id="lastName" value="#{clientBean.client.lastName}" />  
+                                    <p:message for="lastName" />
+                                </h:panelGrid>  
+                            </p:fieldset>
+                            <br />
+                            <p:fieldset legend="Address details">
+                                <h:panelGrid columns="3">  
+                                    <h:outputLabel for="street" value="Street:" />  
+                                    <p:inputText id="street" value="#{clientBean.client.address.street}"/>
+                                    <p:message for="street" />
 
-                    <p:fieldset legend="Address details">
-                        <h:panelGrid columns="2">  
-                            <h:outputLabel for="street" value="Street:" />  
-                            <p:inputText id="street" value="#{clientBean.client.address.street}" required="false"/>
+                                    <h:outputLabel for="city" value="City:" />  
+                                    <p:inputText id="city" value="#{clientBean.client.address.city}"/>
+                                    <p:message for="city" />
 
-                            <h:outputLabel for="postal-code" value="Postal code:" />  
-                            <p:inputText id="postal-code" value="#{clientBean.client.address.postalCode}" required="false"/>
+                                    <h:outputLabel for="postal-code" value="Postal code:" />  
+                                    <p:inputMask id="postal-code" value="#{clientBean.client.address.postalCode}" 
+                                                 mask="99-999"/>
+                                    <p:message for="postal-code" />
 
-                            <h:outputLabel for="city" value="City:" />  
-                            <p:inputText id="city" value="#{clientBean.client.address.city}" required="false"/>
-                        </h:panelGrid>
-                    </p:fieldset>
-                </p:panel>  
-                <p:commandButton value="submit" action="#{clientBean.storeClient()}" update="panel"/>  
-            </h:form>
+                                    <h:outputLabel for="country" value="Country:" />  
+                                    <p:autoComplete id="country" value="#{clientBean.client.address.country.name}" 
+                                                    completeMethod="#{countryBean.completeCountry}"/>
+                                    <p:message for="country" />
+
+                                </h:panelGrid>
+                            </p:fieldset>
+                            <br />
+                            <p:commandButton value="Add client" action="#{clientBean.storeClient()}" update="panel"/>  
+                            <p:commandButton value="Cancel" update="panel" process="@this"  >  
+                                <p:resetInput target="panel" />  
+                            </p:commandButton>  
+                        </p:panel>  
+                    </h:form>
+                </p:layoutUnit>
+                <p:layoutUnit position="center">  
+                    <h:form>  
+                    </h:form>  
+                </p:layoutUnit>  
+            </p:layout>
         </f:view>
     </h:body>
 </html>
