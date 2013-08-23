@@ -4,14 +4,14 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.bean.ManagedBean;
-import pl.kurylek.jsf.service.CountryCompleteService;
+import pl.kurylek.jsf.service.CountryNameCompleteService;
 
 @ManagedBean(name = "countryBean")
 @RequestScoped
 public class CountryBean {
 
     @EJB
-    private CountryCompleteService countryCompleteService;
+    private CountryNameCompleteService countryCompleteService;
     
     public List<String> completeCountry(String qery) {
         return countryCompleteService.complete(qery);

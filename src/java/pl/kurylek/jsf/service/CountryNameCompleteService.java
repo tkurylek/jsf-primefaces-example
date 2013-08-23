@@ -7,7 +7,7 @@ import javax.ejb.Stateless;
 import pl.kurylek.jsf.infrastructure.CountryFacade;
 
 @Stateless
-public class CountryCompleteService {
+public class CountryNameCompleteService {
     
     @EJB
     private CountryFacade countryFacade;

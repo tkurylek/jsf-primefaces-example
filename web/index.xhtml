@@ -9,8 +9,8 @@
         <style>.ui-widget, .ui-widget .ui-widget {font-size: 95%;}</style>
         <script language="javascript">
             var idleCurtain = {
-                fadeIn : function() {
-                    $('.ui-dialog').hide()
+                fadeIn: function() {
+                    $('.ui-dialog-titlebar').hide();
                     $('.ui-widget-overlay').hide().fadeIn('slow');
                 }
             }
@@ -19,7 +19,9 @@
     <h:body>
         <f:view>
             <p:idleMonitor timeout="60000" onidle="idleDialog.show();idleCurtain.fadeIn()" onactive="idleDialog.hide()"/>  
-            <p:dialog resizable="false" widgetVar="idleDialog" modal="true" visible="false" width='0' height="0"/>  
+            <p:dialog resizable="false" widgetVar="idleDialog" modal="true" visible="false" showEffect="explode">
+                <img src="http://fernandomoreiraweb.com/maintenance/coffe_cup.gif" />
+            </p:dialog>
             <p:layout fullPage="true">
                 <p:layoutUnit header="Add new client" position="east" size="450" resizable="true" collapsible="true">
                     <h:form>
@@ -75,11 +77,24 @@
                     </h:form>
                 </p:layoutUnit>
                 <p:layoutUnit position="center">  
-                    <h:form>  
+                    <h:form>
+                        <p:dataTable var="client" value="#{clientBean.lazyClientDataLoader}" paginator="true" rows="10"  
+                                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"  
+                                     rowsPerPageTemplate="10,20,50" selectionMode="single" id="carTable" lazy="true">  
+
+                            <p:column headerText="First name" sortBy="#{client.firstName}" filterBy="#{client.firstName}">  
+                                <h:outputText value="#{client.firstName}" />  
+                            </p:column>  
+                            <p:column headerText="Last name" sortBy="#{client.lastName}" filterBy="#{client.lastName}">  
+                                <h:outputText value="#{client.lastName}" />  
+                            </p:column>  
+                            <p:column headerText="Title" sortBy="#{client.title}" filterBy="#{client.title}">  
+                                <h:outputText value="#{client.title}" />  
+                            </p:column>  
+                        </p:dataTable>
                     </h:form>  
-                </p:layoutUnit>  
+                </p:layoutUnit>
             </p:layout>
         </f:view>
     </h:body>
 </html>
-

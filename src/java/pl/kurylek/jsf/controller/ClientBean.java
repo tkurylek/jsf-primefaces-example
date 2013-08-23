@@ -11,6 +11,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
 import pl.kurylek.jsf.domain.Client;
 import pl.kurylek.jsf.factory.ClientFactory;
+import pl.kurylek.jsf.loader.LazyClientDataLoader;
 
 @ManagedBean(name = "clientBean")
 @RequestScoped
@@ -19,6 +20,8 @@ public class ClientBean {
     private static final String INDEX_PAGE = "index";
     @EJB
     private ClientCRUDService clientCRUDService;
+    @EJB
+    private LazyClientDataLoader lazyClientDataLoader;
     private Client client = ClientFactory.createClient();
 
     public String showIndexPage() {
@@ -34,12 +37,16 @@ public class ClientBean {
         }
         return INDEX_PAGE;
     }
-    
+
     private void addGlobalMessage(FacesMessage.Severity type, String message) {
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(type,message, ""));
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(type, message, ""));
     }
 
     public Client getClient() {
         return client;
+    }
+
+    public LazyClientDataLoader getLazyClientDataLoader() {
+        return lazyClientDataLoader;
     }
 }
