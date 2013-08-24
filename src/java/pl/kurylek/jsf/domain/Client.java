@@ -20,7 +20,6 @@ public class Client implements Serializable {
 
     public static final String TABLE_NAME = "CLIENT";
     private static final long serialVersionUID = 1L;
-    
     private static final int FIRST_NAME_MIN_LENGTH = 3;
     private static final int LAST_NAME_MIN_LENGTH = 3;
     @Id
@@ -28,11 +27,11 @@ public class Client implements Serializable {
     private Long id;
     @NotNull
     @NotEmpty(message = "Please enter first name")
-    @Length(min = FIRST_NAME_MIN_LENGTH, message = "Please enter at least " + FIRST_NAME_MIN_LENGTH + " charaters")
+    @Length(min = FIRST_NAME_MIN_LENGTH, message = "Please enter at least " + FIRST_NAME_MIN_LENGTH + " charaters as first name")
     private String firstName;
     @NotNull
     @NotEmpty(message = "Please enter last name")
-    @Length(min = LAST_NAME_MIN_LENGTH, message = "Please enter at least " + LAST_NAME_MIN_LENGTH + " charaters")
+    @Length(min = LAST_NAME_MIN_LENGTH, message = "Please enter at least " + LAST_NAME_MIN_LENGTH + " charaters as last name")
     private String lastName;
     @NotNull
     @OneToOne(fetch = FetchType.LAZY, optional = false, orphanRemoval = true, cascade = {CascadeType.ALL})

@@ -19,7 +19,7 @@ public class Country implements Serializable {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
-    @NotNull 
+
     @NotEmpty(message = "Please enter country name")
     private String name;
 

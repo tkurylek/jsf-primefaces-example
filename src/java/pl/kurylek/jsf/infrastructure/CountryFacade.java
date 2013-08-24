@@ -16,7 +16,7 @@ public class CountryFacade extends AbstractFacade<Country> {
     public List<String> findCountryNamesLike(String keyword) {
         Query query = em.createQuery("SELECT c.name FROM Country c WHERE UPPER(c.name) LIKE :keyword");
         query.setParameter("keyword", keyword.toUpperCase());
-        query.setMaxResults(20);
+        query.setMaxResults(10);
         return query.getResultList();
     } 
     

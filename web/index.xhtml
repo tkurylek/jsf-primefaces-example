@@ -5,29 +5,137 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui">
     <h:head>
-        <title>Clients Management</title>
-        <style>.ui-widget, .ui-widget .ui-widget {font-size: 95%;}</style>
+        <title>Clients Management in JSF &amp; Primefaces</title>
+        <h:outputStylesheet library="css" name="global.css" />
+        <h:outputScript library="js" name="main.js" />
         <script language="javascript">
-            var idleCurtain = {
-                fadeIn: function() {
-                    $('.ui-dialog-titlebar').hide();
-                    $('.ui-widget-overlay').hide().fadeIn('slow');
-                }
-            }
+            $(function() {
+                postalCodeMasker.mask();
+            });
         </script>
     </h:head>
     <h:body>
         <f:view>
             <p:idleMonitor timeout="60000" onidle="idleDialog.show();idleCurtain.fadeIn()" onactive="idleDialog.hide()"/>  
-            <p:dialog resizable="false" widgetVar="idleDialog" modal="true" visible="false" showEffect="explode">
-                <img src="http://fernandomoreiraweb.com/maintenance/coffe_cup.gif" />
-            </p:dialog>
+            <p:dialog resizable="false" widgetVar="idleDialog" modal="true" />
+            <p:growl widgetVar="growlMessages" id="messages" showDetail="true"/>  
             <p:layout fullPage="true">
+                <p:layoutUnit position="center">  
+                    <h:form id="clientTableForm">
+                        <p:dataTable var="client" value="#{clientBean.lazyClientDataLoader}" paginator="true" rows="20" id="clientTable" lazy="true" widgetVar="clientTable"
+                                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"  
+                                     rowsPerPageTemplate="10,20,30" resizableColumns="true" editable="true" selection="#{clientBean.selectedClients}">  
+
+                            <p:ajax event="rowEdit" listener="#{clientBean.editClient}" update=":messages" />  
+                            <p:ajax event="rowEditCancel" listener="#{clientBean.cancelEditClient}" update=":messages" /> 
+
+                            <p:column selectionMode="multiple" style="width:50px"/>
+
+                            <p:column headerText="Title" sortBy="#{client.title}" filterBy="#{client.title}">  
+                                <p:cellEditor>  
+                                    <f:facet name="output">  
+                                        <h:outputText value="#{client.title}" />  
+                                    </f:facet>  
+                                    <f:facet name="input">  
+                                        <h:selectOneMenu value="#{clientBean.client.title}" style="width:100%">
+                                            <f:selectItems value="#{clientTitleBean.titles}" var="title" itemValue="#{title}" 
+                                                           itemLabel="#{title}" noSelectionValue="true" />
+                                        </h:selectOneMenu>
+                                    </f:facet>  
+                                </p:cellEditor>  
+                            </p:column>
+
+                            <p:column headerText="First name" sortBy="#{client.firstName}" filterBy="#{client.firstName}">  
+                                <p:cellEditor>  
+                                    <f:facet name="output">  
+                                        <h:outputText value="#{client.firstName}" /> 
+                                    </f:facet>  
+                                    <f:facet name="input">  
+                                        <p:inputText value="#{client.firstName}" style="width:100%"/>  
+                                    </f:facet>  
+                                </p:cellEditor>  
+                            </p:column>
+
+                            <p:column headerText="Last name" sortBy="#{client.lastName}" filterBy="#{client.lastName}">  
+                                <p:cellEditor>  
+                                    <f:facet name="output">  
+                                        <h:outputText value="#{client.lastName}" />  
+                                    </f:facet>  
+                                    <f:facet name="input">  
+                                        <p:inputText value="#{client.lastName}" style="width:100%"/>  
+                                    </f:facet>  
+                                </p:cellEditor>
+                            </p:column>
+
+                            <p:column headerText="Street" sortBy="#{client.address.street}" filterBy="#{client.address.street}">  
+                                <p:cellEditor>  
+                                    <f:facet name="output">  
+                                        <h:outputText value="#{client.address.street}" />
+                                    </f:facet>  
+                                    <f:facet name="input">  
+                                        <p:inputText value="#{client.address.street}" style="width:100%"/>
+                                    </f:facet>  
+                                </p:cellEditor>
+                            </p:column>
+                            <p:column headerText="City" sortBy="#{client.address.city}" filterBy="#{client.address.city}">  
+                                <p:cellEditor>  
+                                    <f:facet name="output">  
+                                        <h:outputText value="#{client.address.city}" />
+                                    </f:facet>  
+                                    <f:facet name="input">  
+                                        <p:inputText value="#{client.address.city}" style="width:100%"/>
+                                    </f:facet>  
+                                </p:cellEditor>
+                            </p:column>
+                            <p:column headerText="Postal code" sortBy="#{client.address.postalCode}" filterBy="#{client.address.postalCode}" 
+                                      filterStyleClass="postal-code">  
+                                <p:cellEditor>  
+                                    <f:facet name="output">  
+                                        <h:outputText value="#{client.address.postalCode}" />
+                                    </f:facet>  
+                                    <f:facet name="input">  
+                                        <p:inputText styleClass="postal-code" value="#{client.address.postalCode}" style="width:100%" />
+                                    </f:facet>  
+                                </p:cellEditor>
+                            </p:column>
+                            <p:column headerText="Country" sortBy="#{client.address.country.name}" filterBy="#{client.address.country.name}">  
+                                <p:cellEditor>  
+                                    <f:facet name="output">  
+                                        <h:outputText value="#{client.address.country.name}" />
+                                    </f:facet>  
+                                    <f:facet name="input">  
+                                        <p:autoComplete value="#{client.address.country.name}" completeMethod="#{countryBean.completeCountry}" 
+                                                        dropdown="true" forceSelection="true" />
+                                    </f:facet>  
+                                </p:cellEditor>
+                            </p:column>
+                            <p:column style="width:32px;text-align:center;">  
+                                <p:rowEditor />  
+                            </p:column>
+                            <f:facet name="footer">  
+                                <p:commandButton id="removeClientsButton" value="Remove selected" icon="ui-icon-trash"
+                                                 oncomplete="removeDialog.show()" update=":clientTableForm:confirmationDialog"/>  
+                            </f:facet>  
+                        </p:dataTable>
+                        <p:dialog header="Are you sure you want to delete those clients?" id="confirmationDialog" 
+                                  widgetVar="confirmationDialog" showEffect="fade" hideEffect="explode" >  
+
+                            <p:dataList value="#{clientBean.selectedClients}" var="selectedClient" itemType="disc" >  
+                                #{selectedClient.firstName} #{selectedClient.lastName} from #{selectedClient.address.city}, #{selectedClient.address.country.name}
+                            </p:dataList> 
+                            <hr />
+                            <p:commandButton styleClass="ui-confirmdialog-yes" icon="ui-icon-check" value="Yes" action="#{clientBean.removeSelectedClients()}" 
+                                             update=":clientTableForm:clientTable,:messages,:clientTableForm:confirmationDialog" onclick="confirmationDialog.hide()"/>
+                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" 
+                                             onclick="confirmationDialog.hide()"/> 
+                        </p:dialog>  
+                    </h:form>  
+                </p:layoutUnit>
                 <p:layoutUnit header="Add new client" position="east" size="450" resizable="true" collapsible="true">
                     <h:form>
                         <p:panel id="panel">  
+                            <p:messages id="global-errors" globalOnly="true" closable="true" showDetail="true" />
                             <p:fieldset legend="Personal information">
-                                <p:messages id="global-errors" globalOnly="true" closable="true" showDetail="true" />
                                 <h:panelGrid columns="3">  
                                     <p:outputLabel for="title" value="Title:" />
                                     <h:selectOneMenu id="title" value="#{clientBean.client.title}">
@@ -57,42 +165,37 @@
                                     <p:message for="city" />
 
                                     <h:outputLabel for="postal-code" value="Postal code:" />  
-                                    <p:inputMask id="postal-code" value="#{clientBean.client.address.postalCode}" 
-                                                 mask="99-999"/>
+                                    <p:inputText id="postal-code" styleClass="postal-code" value="#{clientBean.client.address.postalCode}" />
                                     <p:message for="postal-code" />
 
                                     <h:outputLabel for="country" value="Country:" />  
                                     <p:autoComplete id="country" value="#{clientBean.client.address.country.name}" 
-                                                    completeMethod="#{countryBean.completeCountry}"/>
+                                                    completeMethod="#{countryBean.completeCountry}" 
+                                                    dropdown="true" forceSelection="true" />
                                     <p:message for="country" />
 
                                 </h:panelGrid>
                             </p:fieldset>
                             <br />
-                            <p:commandButton value="Add client" action="#{clientBean.storeClient()}" update="panel"/>  
-                            <p:commandButton value="Cancel" update="panel" process="@this"  >  
+                            <p:commandButton value="Add client" action="#{clientBean.storeClient()}" update=":clientTableForm:clientTable,panel" />
+                            <p:commandButton value="Cancel" update="panel" process="@this" >  
                                 <p:resetInput target="panel" />  
                             </p:commandButton>  
+                            <script language="javascript">
+                            $(function() {
+                                postalCodeMasker.mask();
+                            });
+                            </script>
                         </p:panel>  
                     </h:form>
-                </p:layoutUnit>
-                <p:layoutUnit position="center">  
-                    <h:form>
-                        <p:dataTable var="client" value="#{clientBean.lazyClientDataLoader}" paginator="true" rows="10"  
-                                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"  
-                                     rowsPerPageTemplate="10,20,50" selectionMode="single" id="carTable" lazy="true">  
-
-                            <p:column headerText="First name" sortBy="#{client.firstName}" filterBy="#{client.firstName}">  
-                                <h:outputText value="#{client.firstName}" />  
-                            </p:column>  
-                            <p:column headerText="Last name" sortBy="#{client.lastName}" filterBy="#{client.lastName}">  
-                                <h:outputText value="#{client.lastName}" />  
-                            </p:column>  
-                            <p:column headerText="Title" sortBy="#{client.title}" filterBy="#{client.title}">  
-                                <h:outputText value="#{client.title}" />  
-                            </p:column>  
-                        </p:dataTable>
-                    </h:form>  
+                    <p:ajaxStatus style="width:100px;height:100px;position:fixed;right:5px;bottom:5px">  
+                        <f:facet name="start">  
+                            <p:graphicImage value="resources/img/loading.gif" />  
+                        </f:facet>  
+                        <f:facet name="complete">  
+                            <h:outputText value="" />  
+                        </f:facet>  
+                    </p:ajaxStatus>  
                 </p:layoutUnit>
             </p:layout>
         </f:view>
