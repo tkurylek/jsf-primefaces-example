@@ -5,9 +5,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 public abstract class AbstractFacade<T> {
-    private Class<T> entityClass;
+    
     @PersistenceContext(name = "mysql-development")
     protected EntityManager em;
+    private Class<T> entityClass;
 
     public AbstractFacade(Class<T> entityClass) {
         this.entityClass = entityClass;

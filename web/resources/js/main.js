@@ -4,7 +4,7 @@ var idleCurtain = {
         $('.ui-dialog').hide();
         $('.ui-widget-overlay').hide().fadeIn('slow');
     }
-}
+};
 
 // removal confirmation dialog
 var removeDialog = {
@@ -18,11 +18,11 @@ var removeDialog = {
             });
         }
     }
-}
+};
 
 // masks all postal-code fields
 var postalCodeMasker = {
     mask: function() {
         $(".postal-code").mask("99-999");
     }
-}
+};

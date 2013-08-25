@@ -1,76 +1,50 @@
 package pl.kurylek.jsf.controller;
 
 import static javax.faces.application.FacesMessage.SEVERITY_INFO;
-import static javax.faces.application.FacesMessage.SEVERITY_ERROR;
 
 import pl.kurylek.jsf.service.ClientCRUDService;
 import javax.ejb.EJB;
+import static javax.faces.application.FacesMessage.SEVERITY_ERROR;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import org.primefaces.event.RowEditEvent;
 import pl.kurylek.jsf.domain.Client;
-import pl.kurylek.jsf.factory.ClientFactory;
 import pl.kurylek.jsf.service.Callback;
 import pl.kurylek.jsf.service.LazyClientDataLoaderService;
+import static pl.kurylek.jsf.utils.ExceptionUtils.getExceptionRootCauseMessage;
+import static pl.kurylek.jsf.utils.ExceptionUtils.getExceptionRootCauseSimpleName;
 import static pl.kurylek.jsf.utils.MessagesUtils.addGlobalMessage;
 
-@ManagedBean(name = "clientBean")
-@SessionScoped
-public class ClientBean {
+@ManagedBean(name = "clientDataTableBean")
+@ViewScoped
+public class ClientDataTableBean {
 
-    private static final String INDEX_PAGE = "index";
     @EJB
     private ClientCRUDService clientCRUDService;
     @EJB
     private LazyClientDataLoaderService lazyClientDataLoaderService;
     private Client[] selectedClients;
-    private Client client = ClientFactory.createClient();
 
-    public String showIndexPage() {
-        return INDEX_PAGE;
-    }
-
-    public void storeClient() {
-        clientCRUDService.create(client, new Callback() {
+    public void removeSelectedClients() {
+        clientCRUDService.delete(selectedClients, new Callback() {
+            
             @Override
             public void onSuccess() {
-                addGlobalMessage(SEVERITY_INFO, "Client has been added.");
+                addGlobalMessage(SEVERITY_INFO, "Clients removed", 
+                        "Selected clients have been successfully removed from the database");
             }
 
             @Override
             public void onFailure(Exception e) {
-                addGlobalMessage(SEVERITY_ERROR, e.getCause().getMessage());
+                addGlobalMessage(SEVERITY_ERROR, getExceptionRootCauseSimpleName(e), getExceptionRootCauseMessage(e));
             }
         });
-    }
-
-    public void removeSelectedClients() {
-        if (selectedClients.length <= 0) {
-            addGlobalMessage(SEVERITY_ERROR, "No client selected", "Please select clients to be removed");
-            return;
-        }
-        for(final Client client : selectedClients) {
-            clientCRUDService.delete(client, new Callback() {
-
-                @Override
-                public void onSuccess() {
-                    addGlobalMessage(SEVERITY_INFO, 
-                            String.format("%s %s", client.getFirstName(), client.getLastName()), 
-                            "has been successfully removed from the database");
-                }
-
-                @Override
-                public void onFailure(Exception e) {
-                    addGlobalMessage(SEVERITY_INFO, "Error", e.getMessage());
-                }
-            });    
-        }
     }
 
     public void editClient(RowEditEvent event) {
         Client client = (Client) event.getObject();
         clientCRUDService.update(client, new Callback() {
+            
             @Override
             public void onSuccess() {
                 addGlobalMessage(SEVERITY_INFO, "Success", "Client has been successfully saved");
@@ -78,7 +52,7 @@ public class ClientBean {
 
             @Override
             public void onFailure(Exception e) {
-                addGlobalMessage(SEVERITY_INFO, "Error", e.getMessage());
+                addGlobalMessage(SEVERITY_ERROR, getExceptionRootCauseSimpleName(e), getExceptionRootCauseMessage(e));
             }
         });
     }
@@ -89,14 +63,6 @@ public class ClientBean {
 
     public LazyClientDataLoaderService getLazyClientDataLoader() {
         return lazyClientDataLoaderService;
-    }
-
-    public Client getClient() {
-        return client;
-    }
-
-    public void setClient(Client client) {
-        this.client = client;
     }
 
     public Client[] getSelectedClients() {

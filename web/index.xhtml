@@ -7,12 +7,6 @@
     <h:head>
         <title>Clients Management in JSF &amp; Primefaces</title>
         <h:outputStylesheet library="css" name="global.css" />
-        <h:outputScript library="js" name="main.js" />
-        <script language="javascript">
-            $(function() {
-                postalCodeMasker.mask();
-            });
-        </script>
     </h:head>
     <h:body>
         <f:view>
@@ -22,14 +16,18 @@
             <p:layout fullPage="true">
                 <p:layoutUnit position="center">  
                     <h:form id="clientTableForm">
-                        <p:dataTable var="client" value="#{clientBean.lazyClientDataLoader}" paginator="true" rows="20" id="clientTable" lazy="true" widgetVar="clientTable"
+                        <p:dataTable var="client" value="#{clientDataTableBean.lazyClientDataLoader}" paginator="true" rows="20" id="clientTable" lazy="true" widgetVar="clientTable"
                                      paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"  
-                                     rowsPerPageTemplate="10,20,30" resizableColumns="true" editable="true" selection="#{clientBean.selectedClients}">  
+                                     rowsPerPageTemplate="10,20,30" resizableColumns="true" editable="true" selection="#{clientDataTableBean.selectedClients}">  
 
-                            <p:ajax event="rowEdit" listener="#{clientBean.editClient}" update=":messages" />  
-                            <p:ajax event="rowEditCancel" listener="#{clientBean.cancelEditClient}" update=":messages" /> 
+                            <p:ajax event="rowEdit" listener="#{clientDataTableBean.editClient}" update=":messages" />  
+                            <p:ajax event="rowEditCancel" listener="#{clientDataTableBean.cancelEditClient}" update=":messages" /> 
 
-                            <p:column selectionMode="multiple" style="width:50px"/>
+                            <p:column selectionMode="multiple" style="width:25px;text-align:center;"/>
+
+                            <p:column sortBy="#{client.id}" style="width:20px;text-align:center;">
+                                <h:outputText value="#{client.id}" />
+                            </p:column>
 
                             <p:column headerText="Title" sortBy="#{client.title}" filterBy="#{client.title}">  
                                 <p:cellEditor>  
@@ -37,7 +35,7 @@
                                         <h:outputText value="#{client.title}" />  
                                     </f:facet>  
                                     <f:facet name="input">  
-                                        <h:selectOneMenu value="#{clientBean.client.title}" style="width:100%">
+                                        <h:selectOneMenu value="#{clientStorageBean.client.title}" style="width:100%">
                                             <f:selectItems value="#{clientTitleBean.titles}" var="title" itemValue="#{title}" 
                                                            itemLabel="#{title}" noSelectionValue="true" />
                                         </h:selectOneMenu>
@@ -109,22 +107,31 @@
                                     </f:facet>  
                                 </p:cellEditor>
                             </p:column>
+                            <p:column style="width:50px;text-align:center;">
+                                <p:commandButton icon="ui-icon-pin-s" value="Map" style="font-size: 69%"
+                                                 oncomplete="gmap.moveToAddress('#{client.address.street} #{client.address.city}');"/>
+                            </p:column>
                             <p:column style="width:32px;text-align:center;">  
                                 <p:rowEditor />  
                             </p:column>
                             <f:facet name="footer">  
                                 <p:commandButton id="removeClientsButton" value="Remove selected" icon="ui-icon-trash"
                                                  oncomplete="removeDialog.show()" update=":clientTableForm:confirmationDialog"/>  
-                            </f:facet>  
+                                <p:commandButton value="Clear filters" icon="ui-icon-close" oncomplete="clientTable.clearFilters()" />  
+                            </f:facet> 
                         </p:dataTable>
+                        <p:dialog header="Approximate location of selected client based on address" 
+                                  showEffect="fade" width="600" height="400" widgetVar="gmapDialog" visible="false" >
+                            <p:gmap widgetVar="gmap" center="37.4419, -122.1419" zoom="17" type="MAP" style="width:100%;height:100%" />
+                        </p:dialog>
                         <p:dialog header="Are you sure you want to delete those clients?" id="confirmationDialog" 
                                   widgetVar="confirmationDialog" showEffect="fade" hideEffect="explode" >  
 
-                            <p:dataList value="#{clientBean.selectedClients}" var="selectedClient" itemType="disc" >  
+                            <p:dataList value="#{clientDataTableBean.selectedClients}" var="selectedClient" itemType="disc" >  
                                 #{selectedClient.firstName} #{selectedClient.lastName} from #{selectedClient.address.city}, #{selectedClient.address.country.name}
                             </p:dataList> 
                             <hr />
-                            <p:commandButton styleClass="ui-confirmdialog-yes" icon="ui-icon-check" value="Yes" action="#{clientBean.removeSelectedClients()}" 
+                            <p:commandButton styleClass="ui-confirmdialog-yes" icon="ui-icon-check" value="Yes" action="#{clientDataTableBean.removeSelectedClients()}" 
                                              update=":clientTableForm:clientTable,:messages,:clientTableForm:confirmationDialog" onclick="confirmationDialog.hide()"/>
                             <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" 
                                              onclick="confirmationDialog.hide()"/> 
@@ -138,18 +145,18 @@
                             <p:fieldset legend="Personal information">
                                 <h:panelGrid columns="3">  
                                     <p:outputLabel for="title" value="Title:" />
-                                    <h:selectOneMenu id="title" value="#{clientBean.client.title}">
+                                    <h:selectOneMenu id="title" value="#{clientStorageBean.client.title}">
                                         <f:selectItems value="#{clientTitleBean.titles}" var="title" itemValue="#{title}" 
                                                        itemLabel="#{title}" noSelectionValue="true" />
                                     </h:selectOneMenu>
                                     <p:message for="title" />
 
                                     <h:outputLabel for="firstName" value="First name:" />  
-                                    <p:inputText id="firstName" value="#{clientBean.client.firstName}" />
+                                    <p:inputText id="firstName" value="#{clientStorageBean.client.firstName}" />
                                     <p:message for="firstName" />
 
                                     <p:outputLabel for="lastName" value="Last name:" />
-                                    <p:inputText id="lastName" value="#{clientBean.client.lastName}" />  
+                                    <p:inputText id="lastName" value="#{clientStorageBean.client.lastName}" />  
                                     <p:message for="lastName" />
                                 </h:panelGrid>  
                             </p:fieldset>
@@ -157,34 +164,34 @@
                             <p:fieldset legend="Address details">
                                 <h:panelGrid columns="3">  
                                     <h:outputLabel for="street" value="Street:" />  
-                                    <p:inputText id="street" value="#{clientBean.client.address.street}"/>
+                                    <p:inputText id="street" value="#{clientStorageBean.client.address.street}"/>
                                     <p:message for="street" />
 
                                     <h:outputLabel for="city" value="City:" />  
-                                    <p:inputText id="city" value="#{clientBean.client.address.city}"/>
+                                    <p:inputText id="city" value="#{clientStorageBean.client.address.city}"/>
                                     <p:message for="city" />
 
                                     <h:outputLabel for="postal-code" value="Postal code:" />  
-                                    <p:inputText id="postal-code" styleClass="postal-code" value="#{clientBean.client.address.postalCode}" />
+                                    <p:inputText id="postal-code" styleClass="postal-code" value="#{clientStorageBean.client.address.postalCode}" />
                                     <p:message for="postal-code" />
 
                                     <h:outputLabel for="country" value="Country:" />  
-                                    <p:autoComplete id="country" value="#{clientBean.client.address.country.name}" 
+                                    <p:autoComplete id="country" value="#{clientStorageBean.client.address.country.name}" 
                                                     completeMethod="#{countryBean.completeCountry}" 
                                                     dropdown="true" forceSelection="true" />
                                     <p:message for="country" />
 
-                                </h:panelGrid>
+                                </h:panelGrid>  
                             </p:fieldset>
                             <br />
-                            <p:commandButton value="Add client" action="#{clientBean.storeClient()}" update=":clientTableForm:clientTable,panel" />
+                            <p:commandButton value="Add client" action="#{clientStorageBean.storeClient()}" update=":clientTableForm:clientTable,panel" />
                             <p:commandButton value="Cancel" update="panel" process="@this" >  
                                 <p:resetInput target="panel" />  
                             </p:commandButton>  
                             <script language="javascript">
-                            $(function() {
-                                postalCodeMasker.mask();
-                            });
+                                                 $(function() {
+                                                     postalCodeMasker.mask();
+                                                 });
                             </script>
                         </p:panel>  
                     </h:form>
@@ -199,5 +206,15 @@
                 </p:layoutUnit>
             </p:layout>
         </f:view>
+        <!-- Scripts at the bottom to speed up page loading -->
+        <script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript" />
+        <h:outputScript library="js" name="main.js" />
+        <h:outputScript library="js" name="geocoding.js" />
+        <script language="javascript">
+            $(function() {
+                new GmapGeocoding(gmap, gmapDialog); // extends gmap widget functionality
+                postalCodeMasker.mask(); // masks all postal-code inputs
+            });
+        </script>
     </h:body>
 </html>

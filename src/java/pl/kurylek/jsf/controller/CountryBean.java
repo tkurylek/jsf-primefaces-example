@@ -2,12 +2,12 @@ package pl.kurylek.jsf.controller;
 
 import java.util.List;
 import javax.ejb.EJB;
-import javax.enterprise.context.RequestScoped;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import pl.kurylek.jsf.service.CountryNameCompleteService;
 
 @ManagedBean(name = "countryBean")
-@RequestScoped
+@SessionScoped
 public class CountryBean {
 
     @EJB

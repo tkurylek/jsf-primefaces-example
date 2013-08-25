@@ -23,7 +23,7 @@ public class ClientCRUDService {
         clientValidatonService.validateCountry(client);
         clientFacade.create(client);
     }
-    
+
     public void create(Client client, Callback callback) {
         try {
             create(client);
@@ -45,12 +45,12 @@ public class ClientCRUDService {
     public List<Client> retrieveAll(int start, int maxResults, String sortField, SortOrder sortOrder, Map<String, String> filters) {
         return clientFacade.findAll(start, maxResults, sortField, sortOrder, filters);
     }
-    
+
     public void update(Client client) {
         clientValidatonService.validateCountry(client);
         clientFacade.edit(client);
     }
-    
+
     public void update(Client client, Callback callback) {
         try {
             update(client);
@@ -61,20 +61,27 @@ public class ClientCRUDService {
         }
     }
 
+    public void delete(Client[] clients) {
+        clientValidatonService.validateClientsExist(clients);
+        for (Client client : clients) {
+            delete(client);
+        }
+    }
+
     public void delete(Client client) {
         clientFacade.remove(client);
     }
-    
-    public void delete(Client client, Callback callback) {
+
+    public void delete(Client[] clients, Callback callback) {
         try {
-            delete(client);
+            delete(clients);
             callback.onSuccess();
         } catch (Exception e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
             callback.onFailure(e);
         }
     }
-    
+
     public int count() {
         return clientFacade.count();
     }

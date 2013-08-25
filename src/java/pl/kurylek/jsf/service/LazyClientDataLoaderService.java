@@ -34,7 +34,7 @@ public class LazyClientDataLoaderService extends LazyDataModel<Client> {
         return clientCRUDService.retrieveAll(first, pageSize, sortField, sortOrder, filters);
     }
     
-    // ArithmeticException: / by zero - workaround :/
+    // DataTable's 'ArithmeticException: / by zero' unsure workaround :/
     @Override
     public void setRowIndex(int rowIndex) {
         if (rowIndex == -1 || getPageSize() == 0) {

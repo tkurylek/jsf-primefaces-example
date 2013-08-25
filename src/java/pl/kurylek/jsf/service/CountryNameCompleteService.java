@@ -5,6 +5,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
 import pl.kurylek.jsf.infrastructure.CountryFacade;
+import pl.kurylek.jsf.utils.MysqlUtils;
 
 @Stateless
 public class CountryNameCompleteService {
@@ -13,6 +14,6 @@ public class CountryNameCompleteService {
     private CountryFacade countryFacade;
 
     public List<String> complete(String keyword) {
-        return countryFacade.findCountryNamesLike("%" + keyword + "%");
+        return countryFacade.findCountryNamesLike(MysqlUtils.contains(keyword));
     }
 }
