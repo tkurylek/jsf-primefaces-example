@@ -1,15 +1,17 @@
 package pl.kurylek.jsf.controller;
 
+import java.io.Serializable;
 import java.util.List;
 import javax.ejb.EJB;
+import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
 import pl.kurylek.jsf.service.CountryNameCompleteService;
 
 @ManagedBean(name = "countryBean")
-@SessionScoped
-public class CountryBean {
+@ApplicationScoped
+public class CountryBean implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     @EJB
     private CountryNameCompleteService countryNameCompleteService;
     

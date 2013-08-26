@@ -1,8 +1,8 @@
 package pl.kurylek.jsf.web;
 
-public interface Callback {
+public interface Callback<T>  {
     
-    void onSuccess();
+    void onSuccess(T object);
     
     void onFailure(Exception e);
 }

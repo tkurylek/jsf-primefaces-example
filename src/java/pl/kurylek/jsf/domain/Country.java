@@ -6,7 +6,7 @@ import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.NotBlank;
 
 @Entity
 @Table(name = Country.TABLE)
@@ -19,7 +19,7 @@ public class Country implements Serializable {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @NotEmpty(message = "Please enter country name")
+    @NotBlank(message = "Please enter country name")
     private String name;
 
     public Long getId() {

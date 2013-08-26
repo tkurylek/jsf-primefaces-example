@@ -8,10 +8,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.NotBlank;
 
 @Entity
 @Table(name = Address.TABLE_NAME)
@@ -24,14 +23,17 @@ public class Address implements Serializable {
     @Id
     @GeneratedValue
     private Long id;
-    @NotEmpty(message = "Please enter street name")
+    
+    @NotBlank(message = "Please enter street name")
     private String street;
+    
     @Pattern(regexp = POSTAL_CODE_REGEXP, message = "Please enter a valid postal code, i.e. 41-907")
     private String postalCode;
-    @NotEmpty(message = "Please enter city name")
+    
+    @NotBlank(message = "Please enter city name")
     @Length(min = CITY_MIN_LENGTH, message = "Please enter at least " + CITY_MIN_LENGTH + " charaters as city name")
     private String city;
-    @NotNull
+    
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = {CascadeType.DETACH, CascadeType.PERSIST})
     private Country country;
 

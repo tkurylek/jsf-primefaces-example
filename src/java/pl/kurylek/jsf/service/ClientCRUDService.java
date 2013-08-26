@@ -14,22 +14,22 @@ import pl.kurylek.jsf.infrastructure.ClientFacade;
 @Stateless
 public class ClientCRUDService {
 
-    private static final Logger logger = Logger.getLogger(ClientCRUDService.class.getSimpleName());
+    private static final Logger logger = Logger.getGlobal();
     @EJB
     private ClientValidatonService clientValidatonService;
     @EJB
     private ClientFacade clientFacade;
 
-    public void create(Client client, Callback callback) {
+    public void create(Client client, Callback<Client> callback) {
         try {
             create(client);
-            callback.onSuccess();
+            callback.onSuccess(client);
         } catch (Exception e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
             callback.onFailure(e);
         }
     }
-    
+
     public void create(Client client) {
         clientValidatonService.validateCountry(client);
         clientFacade.create(client);
@@ -47,19 +47,29 @@ public class ClientCRUDService {
         return clientFacade.findAll(start, maxResults, sortField, sortOrder, filters);
     }
 
-    public void update(Client client, Callback callback) {
+    public void update(Client client, Callback<Client> callback) {
         try {
             update(client);
-            callback.onSuccess();
+            callback.onSuccess(client);
         } catch (Exception e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
             callback.onFailure(e);
         }
     }
-    
+
     public void update(Client client) {
         clientValidatonService.validateCountry(client);
         clientFacade.edit(client);
+    }
+
+    public void delete(Client[] clients, Callback<Client[]> callback) {
+        try {
+            delete(clients);
+            callback.onSuccess(clients);
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, e.getMessage(), e);
+            callback.onFailure(e);
+        }
     }
 
     public void delete(Client[] clients) {
@@ -68,9 +78,9 @@ public class ClientCRUDService {
             delete(client);
         }
     }
-    
+
     private void throwExceptionWhenNoClientWasGiven(Client[] clients) {
-        if(clients == null || clients.length <= 0) {
+        if (clients == null || clients.length <= 0) {
             throw new IllegalArgumentException("No client was given");
         }
     }
@@ -78,16 +88,6 @@ public class ClientCRUDService {
     public void delete(Client client) {
         clientValidatonService.validateClientExist(client);
         clientFacade.remove(client);
-    }
-
-    public void delete(Client[] clients, Callback callback) {
-        try {
-            delete(clients);
-            callback.onSuccess();
-        } catch (Exception e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
-            callback.onFailure(e);
-        }
     }
 
     public int count() {

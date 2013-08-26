@@ -12,7 +12,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.NotBlank;
 
 @Entity
 @Table(name = Client.TABLE_NAME)
@@ -25,17 +25,18 @@ public class Client implements Serializable {
     @Id
     @GeneratedValue
     private Long id;
-    @NotNull
-    @NotEmpty(message = "Please enter first name")
+    
+    @NotBlank(message = "Please enter first name")
     @Length(min = FIRST_NAME_MIN_LENGTH, message = "Please enter at least " + FIRST_NAME_MIN_LENGTH + " charaters as first name")
     private String firstName;
-    @NotNull
-    @NotEmpty(message = "Please enter last name")
+    
+    @NotBlank(message = "Please enter last name")
     @Length(min = LAST_NAME_MIN_LENGTH, message = "Please enter at least " + LAST_NAME_MIN_LENGTH + " charaters as last name")
     private String lastName;
-    @NotNull
+    
     @OneToOne(fetch = FetchType.LAZY, optional = false, orphanRemoval = true, cascade = {CascadeType.ALL})
     private Address address;
+    
     @NotNull
     @Enumerated(EnumType.STRING)
     private Title title;

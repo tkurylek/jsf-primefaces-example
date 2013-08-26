@@ -6,8 +6,6 @@ package pl.kurylek.jsf.controller;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
-import static javax.faces.application.FacesMessage.SEVERITY_ERROR;
-import static javax.faces.application.FacesMessage.SEVERITY_INFO;
 import javax.faces.bean.ManagedBean;
 import pl.kurylek.jsf.domain.Client;
 import pl.kurylek.jsf.factory.ClientFactory;
@@ -15,12 +13,13 @@ import pl.kurylek.jsf.web.Callback;
 import pl.kurylek.jsf.service.ClientCRUDService;
 import static pl.kurylek.jsf.utils.ExceptionUtils.getExceptionRootCauseMessage;
 import static pl.kurylek.jsf.utils.ExceptionUtils.getExceptionRootCauseSimpleName;
-import static pl.kurylek.jsf.utils.MessagesUtils.addGlobalMessage;
+import static pl.kurylek.jsf.utils.MessagesUtils.addGlobalInfoMessage;
+import static pl.kurylek.jsf.utils.MessagesUtils.addGlobalErrorMessage;
 
 @ManagedBean(name = "clientStorageBean")
 @RequestScoped
 public class ClientStorageBean {
-
+    
     private static final String INDEX_PAGE = "index";
     @EJB
     private ClientCRUDService clientCRUDService;
@@ -31,16 +30,16 @@ public class ClientStorageBean {
     }
 
     public void storeClient() {
-        clientCRUDService.create(client, new Callback() {
-            
+        clientCRUDService.create(client, new Callback<Client>() {
             @Override
-            public void onSuccess() {
-                addGlobalMessage(SEVERITY_INFO, "Client has been added.");
+            public void onSuccess(Client client) {
+                addGlobalInfoMessage(
+                        String.format("Client %s %s has been added", client.getFirstName(), client.getLastName()));
             }
 
             @Override
             public void onFailure(Exception e) {
-                addGlobalMessage(SEVERITY_ERROR, getExceptionRootCauseSimpleName(e), getExceptionRootCauseMessage(e));
+                addGlobalErrorMessage(getExceptionRootCauseSimpleName(e), getExceptionRootCauseMessage(e));
             }
         });
     }
