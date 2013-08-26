@@ -9,7 +9,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import org.primefaces.event.RowEditEvent;
 import pl.kurylek.jsf.domain.Client;
-import pl.kurylek.jsf.service.Callback;
+import pl.kurylek.jsf.web.Callback;
 import pl.kurylek.jsf.service.LazyClientDataLoaderService;
 import static pl.kurylek.jsf.utils.ExceptionUtils.getExceptionRootCauseMessage;
 import static pl.kurylek.jsf.utils.ExceptionUtils.getExceptionRootCauseSimpleName;

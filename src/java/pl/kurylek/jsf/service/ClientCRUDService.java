@@ -1,5 +1,6 @@
 package pl.kurylek.jsf.service;
 
+import pl.kurylek.jsf.web.Callback;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -19,11 +20,6 @@ public class ClientCRUDService {
     @EJB
     private ClientFacade clientFacade;
 
-    public void create(Client client) {
-        clientValidatonService.validateCountry(client);
-        clientFacade.create(client);
-    }
-
     public void create(Client client, Callback callback) {
         try {
             create(client);
@@ -32,6 +28,11 @@ public class ClientCRUDService {
             logger.log(Level.SEVERE, e.getMessage(), e);
             callback.onFailure(e);
         }
+    }
+    
+    public void create(Client client) {
+        clientValidatonService.validateCountry(client);
+        clientFacade.create(client);
     }
 
     public Client retrieveById(Long id) {
@@ -46,11 +47,6 @@ public class ClientCRUDService {
         return clientFacade.findAll(start, maxResults, sortField, sortOrder, filters);
     }
 
-    public void update(Client client) {
-        clientValidatonService.validateCountry(client);
-        clientFacade.edit(client);
-    }
-
     public void update(Client client, Callback callback) {
         try {
             update(client);
@@ -60,15 +56,27 @@ public class ClientCRUDService {
             callback.onFailure(e);
         }
     }
+    
+    public void update(Client client) {
+        clientValidatonService.validateCountry(client);
+        clientFacade.edit(client);
+    }
 
     public void delete(Client[] clients) {
-        clientValidatonService.validateClientsExist(clients);
+        throwExceptionWhenNoClientWasGiven(clients);
         for (Client client : clients) {
             delete(client);
         }
     }
+    
+    private void throwExceptionWhenNoClientWasGiven(Client[] clients) {
+        if(clients == null || clients.length <= 0) {
+            throw new IllegalArgumentException("No client was given");
+        }
+    }
 
     public void delete(Client client) {
+        clientValidatonService.validateClientExist(client);
         clientFacade.remove(client);
     }
 

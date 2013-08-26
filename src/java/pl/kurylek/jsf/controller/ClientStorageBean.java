@@ -11,7 +11,7 @@ import static javax.faces.application.FacesMessage.SEVERITY_INFO;
 import javax.faces.bean.ManagedBean;
 import pl.kurylek.jsf.domain.Client;
 import pl.kurylek.jsf.factory.ClientFactory;
-import pl.kurylek.jsf.service.Callback;
+import pl.kurylek.jsf.web.Callback;
 import pl.kurylek.jsf.service.ClientCRUDService;
 import static pl.kurylek.jsf.utils.ExceptionUtils.getExceptionRootCauseMessage;
 import static pl.kurylek.jsf.utils.ExceptionUtils.getExceptionRootCauseSimpleName;

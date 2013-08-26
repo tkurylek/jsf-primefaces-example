@@ -26,4 +26,6 @@ var GmapGeocoding = function(gmap, gmapDialog) {
             }
         });
     };
+    
+    return gmap;
 }

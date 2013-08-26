@@ -11,9 +11,9 @@ import pl.kurylek.jsf.service.CountryNameCompleteService;
 public class CountryBean {
 
     @EJB
-    private CountryNameCompleteService countryCompleteService;
+    private CountryNameCompleteService countryNameCompleteService;
     
     public List<String> completeCountry(String qery) {
-        return countryCompleteService.complete(qery);
+        return countryNameCompleteService.complete(qery);
     }
 }

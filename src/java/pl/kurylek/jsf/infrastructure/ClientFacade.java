@@ -52,6 +52,10 @@ public class ClientFacade extends AbstractFacade<Client> {
         return sortField != null && sortOrder != null;
     }
 
+    private boolean hasFilteringInformation(Map<?, ?> filters) {
+        return filters != null;
+    }
+    
     private <K, V, M extends Map<K, V>> Path<String> getNestedField(Root<?> client, String fieldPath) {
         String[] fieldsNames = fieldPath.split(DOT);
         Path<String> field = client.<String>get(fieldsNames[0]);
@@ -59,9 +63,5 @@ public class ClientFacade extends AbstractFacade<Client> {
             field = field.get(fieldsNames[i]);
         }
         return field;
-    }
-
-    private boolean hasFilteringInformation(Map<?, ?> filters) {
-        return filters != null;
     }
 }

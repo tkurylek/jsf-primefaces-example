@@ -16,9 +16,9 @@
             <p:layout fullPage="true">
                 <p:layoutUnit position="center">  
                     <h:form id="clientTableForm">
-                        <p:dataTable var="client" value="#{clientDataTableBean.lazyClientDataLoader}" paginator="true" rows="20" id="clientTable" lazy="true" widgetVar="clientTable"
+                        <p:dataTable var="client" value="#{clientDataTableBean.lazyClientDataLoader}" paginator="true" rows="10" id="clientTable" lazy="true" widgetVar="clientTable"
                                      paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"  
-                                     rowsPerPageTemplate="10,20,30" resizableColumns="true" editable="true" selection="#{clientDataTableBean.selectedClients}">  
+                                     rowsPerPageTemplate="10,25,50" resizableColumns="true" editable="true" selection="#{clientDataTableBean.selectedClients}">  
 
                             <p:ajax event="rowEdit" listener="#{clientDataTableBean.editClient}" update=":messages" />  
                             <p:ajax event="rowEditCancel" listener="#{clientDataTableBean.cancelEditClient}" update=":messages" /> 
@@ -117,14 +117,15 @@
                             <f:facet name="footer">  
                                 <p:commandButton id="removeClientsButton" value="Remove selected" icon="ui-icon-trash"
                                                  oncomplete="removeDialog.show()" update=":clientTableForm:confirmationDialog"/>  
+                                <p:commandButton value="Clear selection" icon="ui-icon-circle-check" oncomplete="clientTable.unselectAllRows()" />  
                                 <p:commandButton value="Clear filters" icon="ui-icon-close" oncomplete="clientTable.clearFilters()" />  
                             </f:facet> 
                         </p:dataTable>
-                        <p:dialog header="Approximate location of selected client based on address" 
-                                  showEffect="fade" width="600" height="400" widgetVar="gmapDialog" visible="false" >
+                        <p:dialog header="Approximate location of selected client" showEffect="fade" width="600" height="400" 
+                                  widgetVar="gmapDialog" visible="false" >
                             <p:gmap widgetVar="gmap" center="37.4419, -122.1419" zoom="17" type="MAP" style="width:100%;height:100%" />
                         </p:dialog>
-                        <p:dialog header="Are you sure you want to delete those clients?" id="confirmationDialog" 
+                        <p:dialog header="Are you sure you want to delete these clients?" id="confirmationDialog" 
                                   widgetVar="confirmationDialog" showEffect="fade" hideEffect="explode" >  
 
                             <p:dataList value="#{clientDataTableBean.selectedClients}" var="selectedClient" itemType="disc" >  
@@ -132,9 +133,9 @@
                             </p:dataList> 
                             <hr />
                             <p:commandButton styleClass="ui-confirmdialog-yes" icon="ui-icon-check" value="Yes" action="#{clientDataTableBean.removeSelectedClients()}" 
-                                             update=":clientTableForm:clientTable,:messages,:clientTableForm:confirmationDialog" onclick="confirmationDialog.hide()"/>
+                                             update=":clientTableForm:clientTable,:messages,:clientTableForm:confirmationDialog" oncomplete="removeDialog.confirm()"/>
                             <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" 
-                                             onclick="confirmationDialog.hide()"/> 
+                                             onclick="removeDialog.cancel()"/> 
                         </p:dialog>  
                     </h:form>  
                 </p:layoutUnit>
@@ -212,7 +213,7 @@
         <h:outputScript library="js" name="geocoding.js" />
         <script language="javascript">
             $(function() {
-                new GmapGeocoding(gmap, gmapDialog); // extends gmap widget functionality
+                gmap = new GmapGeocoding(gmap, gmapDialog); // extends gmap widget functionality
                 postalCodeMasker.mask(); // masks all postal-code inputs
             });
         </script>

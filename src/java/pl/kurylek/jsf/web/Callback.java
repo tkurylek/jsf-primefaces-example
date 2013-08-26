@@ -1,4 +1,4 @@
-package pl.kurylek.jsf.service;
+package pl.kurylek.jsf.web;
 
 public interface Callback {
     

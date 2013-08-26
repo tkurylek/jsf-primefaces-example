@@ -17,6 +17,13 @@ var removeDialog = {
                 detail: 'Please select clients to be removed'
             });
         }
+    },
+    confirm: function() {
+        clientTable.unselectAllRows();
+        confirmationDialog.hide();
+    },
+    cancel: function() {
+        confirmationDialog.hide();
     }
 };
 

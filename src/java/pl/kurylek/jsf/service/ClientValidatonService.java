@@ -11,48 +11,40 @@ import pl.kurylek.jsf.service.exception.CountryBindingException;
 
 @Stateless
 public class ClientValidatonService {
-    
+
     @EJB
     private CountryFacade countryFacade;
     @EJB
     private ClientFacade clientFacade;
-    
+
     public void validateCountry(Client client) {
-        Country country = findClientCountry(client);
-        throwExceptionWhenCountryDoesNotExist(country);
+        String countryName = client.getAddress().getCountry().getName();
+        Country country = countryFacade.findByName(countryName);
+        throwExceptionWhenCountryDoesNotExist(country, countryName);
         client.getAddress().setCountry(country);
     }
 
-    private Country findClientCountry(Client client) {
-        return countryFacade.findByName(client.getAddress().getCountry().getName());
-    }
-
-    private void throwExceptionWhenCountryDoesNotExist(Country country) {
+    private void throwExceptionWhenCountryDoesNotExist(Country country, String countryName) {
         if (country == null) {
-            throw new CountryBindingException("Given country is not recognisable");
+            throw new CountryBindingException("Given country '%s' is not recognisable", countryName);
         }
     }
 
-    public void validateClientsExist(Client[] clients) {
-        throwExceptionWhenNoClientWasGiven(clients);
-        throwExceptionWhenClientDoesNotExist(clients);
+    public void validateClientExist(Client client) {
+        throwExceptionWhenClientIsNull(client);
+        throwExceptionWhenClientDoesNotExist(client);
     }
-    
-    private void throwExceptionWhenNoClientWasGiven(Client[] clients) {
-        if (clients.length <= 0) {
-            throw new ClientRemoveException("No client was given");
-        }
-    }
-    
-    private void throwExceptionWhenClientDoesNotExist(Client[] clients) {
-        for(Client client : clients) {
-            throwExceptionWhenClientDoesNotExist(client);
+
+    private void throwExceptionWhenClientIsNull(Client client) {
+        if(client == null) {
+            throw new ClientRemoveException("Client cannot be null");
         }
     }
 
     private void throwExceptionWhenClientDoesNotExist(Client client) {
-        if(client == null || client.getId() == null || clientFacade.find(client.getId()) == null) {
-            throw new ClientRemoveException("Client with id %i does not exist", client);
+        assert client != null;
+        if (clientFacade.find(client.getId()) == null) {
+            throw new ClientRemoveException("Client with id %i does not exist", client.getId());
         }
     }
 }
